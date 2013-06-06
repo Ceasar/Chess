@@ -6,29 +6,17 @@ class Board(object):
         self._pieces = pieces or {}
         assert type(self._pieces) == dict
 
-    @property
-    def width(self):
-        return 8
-
-    @property
-    def height(self):
-        return 8
+    width = 8
+    height = 8
+    squares = {(x, y) for x in range(8) for y in range(8)}
 
     @property
     def pieces(self):
         return self._pieces.values()
 
-    LOCS = {}
-
-    def is_on_board(self, loc):
+    def is_on_board(self, location):
         """Check if a location is on the board."""
-        try:
-            return self.LOCS[loc]
-        except KeyError:
-            x, y = loc
-            self.LOCS[loc] = result = 0 <= x < self.width and 0 <= y < self.height
-            return result
-
+        return location in self.squares
 
     def piece_at(self, location):
         """Get the piece at a given location or None if no piece is found."""
