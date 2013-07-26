@@ -32,12 +32,10 @@ class Piece(object):
 
     def moves(self, board):
         for square in self.attackable(board):
-            piece = board.piece_at(square)
-            move = Move(self, self.location, square, piece)
-            yield move
+            yield Move(self, self.location, square, board.piece_at(square))
 
     def reachable(self, board):
-        """Get all the squares this pice can reach."""
+        """Get all the squares this piece can reach."""
         for move in self.moves(board):
             yield move.to
 
@@ -49,9 +47,9 @@ class Piece(object):
         return hash((type(self), self.location, self.owner.color))
 
     def __eq__(self, other):
-        return type(self) == type(other) and \
-               self.owner == other.owner and \
-               self.location == other.location
+        return (type(self) == type(other)
+                and self.owner == other.owner
+                and self.location == other.location)
 
     def __ne__(self, other):
         return not self == other
@@ -94,7 +92,7 @@ class Rook(VectorPiece):
 
 class Queen(VectorPiece):
     _vectors = ((1, 0), (0, 1), (-1, 0), (0, -1),
-            (1, 1), (-1, -1), (1, -1), (-1, 1))
+                (1, 1), (-1, -1), (1, -1), (-1, 1))
 
     def __str__(self):
         return "Queen"
@@ -102,7 +100,7 @@ class Queen(VectorPiece):
 
 class Knight(Piece):
     _vectors = ((1, 2), (1, -2), (-1, 2), (-1, -2),
-            (2, 1), (2, -1), (-2, 1), (-2, -1))
+                (2, 1), (2, -1), (-2, 1), (-2, -1))
 
     def attackable(self, board):
         for vector in self._vectors:
@@ -142,7 +140,7 @@ class King(Piece):
                     yield Move(self, self.location, (self.x - 2, self.y))
             if self.owner.can_castle_kingside:
                 if (board.piece_at((self.x + 1, self.y)) is None
-                    and board.piece_at((self.x + 2, self.y)) is None):
+                        and board.piece_at((self.x + 2, self.y)) is None):
                     yield Move(self, self.location, (self.x + 2, self.y))
 
     def __str__(self):
@@ -180,8 +178,8 @@ class Pawn(Piece):
             piece = board.piece_at(square)
             if square[1] == self.promotion_rank:
                 for promote in self.promotable:
-                    move = Move(self, self.location, square, \
-                            piece, promote)
+                    move = Move(self, self.location, square,
+                                piece, promote)
                     yield move
             else:
                 yield Move(self, self.location, square, piece)
